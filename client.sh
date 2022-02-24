@@ -17,6 +17,23 @@ do
 			curl -s "${BASE_URL}" | jq '.'
 			;;
 		'2')
+			echo 'What is the name of the task?'
+			read name
+			echo 'Is it completed?'
+			read completed
+
+			JSON='{
+						"name": "'${name}'",
+						"completed": '${completed}'
+				}'
+
+			echo "$JSON"
+			
+			curl -X POST "${BASE_URL}/" \
+				-s \
+				-H "Content-Type: application/json" \
+				-d "$JSON" | jq '.'
+
 			;;
 		'3')
 			;;

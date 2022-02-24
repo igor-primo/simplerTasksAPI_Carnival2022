@@ -1,3 +1,5 @@
+const Task = require('../models/Task');
+
 function getAllTasks(req, res) {
 
 	/*
@@ -8,13 +10,14 @@ function getAllTasks(req, res) {
 
 }
 
-function createTask(req, res){
+async function createTask(req, res){
 
 	/*
 	 	#swagger.tags = ['Posters']
 	 */
 
-	res.send('create task');
+	const task = await Task.create(req.body);
+	res.status(201).json({task});
 
 }
 
