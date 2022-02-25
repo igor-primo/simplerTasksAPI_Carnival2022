@@ -1,12 +1,22 @@
 const Task = require('../models/Task');
 
-function getAllTasks(req, res) {
+async function getAllTasks(req, res) {
 
 	/*
 	 	#swagger.tags = ['Getters']
 	 */
 
-	res.json({msg: 'all items'});
+	try{
+
+		const tasks = await Task.find({});
+		return res.status(200).json({tasks});
+
+	} catch(err){
+
+		return res.status(500)
+			.json({msg: err});
+		
+	}
 
 }
 
@@ -16,18 +26,46 @@ async function createTask(req, res){
 	 	#swagger.tags = ['Posters']
 	 */
 
-	const task = await Task.create(req.body);
-	res.status(201).json({task});
+	try{
+
+		const task = await Task.create(req.body);
+		return res.status(201).json({task});
+		
+	} catch (err){
+
+		return res.status(500)
+			.json({msg: err});
+
+	}
 
 }
 
-function getTask(req, res){
+async function getTask(req, res){
 
 	/*
 	 	#swagger.tags = ['Getters']
 	 */
 
-	res.send('get single task');
+	try{
+
+		const {id: taskId} = req.params;
+		const task = await Task.findOne({_id: taskId});
+
+		if(!task){
+
+			return res.status(404)
+				.json({msg: 'Nenhuma tarefa com essa id'});
+
+		}
+
+		return res.status(200)
+			.json({task});
+
+	} catch (err) {
+		
+		return res.status(500).json({msg: err});
+
+	}
 
 }
 
@@ -41,18 +79,35 @@ function updateTask(req, res){
 
 }
 
-function deleteTask(req, res){
+async function deleteTask(req, res){
 
 	/*
 	 	#swagger.tags = ['Putters']
 	 */
 
-	res.send('delete task');
+	try{
+
+		const {id: taskId} = req.params;
+		const task = await Task.findOneAndDelete({_id: taskId});
+
+		if(!task){
+
+			return res.status(404)
+				.json({msg: 'Nenhuma tarefa com essa id'});
+
+		}
+
+		return res.status(200)
+			.json({task});
+
+	} catch(err){
+
+		return res.status(500)
+			.json({msg: err});
+
+	}
 
 }
-
-
-
 
 module.exports = { 
 
