@@ -1,5 +1,4 @@
 # simplerTasksAPI_Carnival2022
-
 Carnival means time to stay
 home and rehearse a few skills.
 Here is a simpler implementation
