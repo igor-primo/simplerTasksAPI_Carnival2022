@@ -7,3 +7,5 @@ of a TODO task application exploring
 a different style and a different 
 database. I also exercise writing 
 API documentation with swagger.
+I also exercise a better architecture
+pattern implementation.

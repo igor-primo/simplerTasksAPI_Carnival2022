@@ -1,135 +1,87 @@
 const Task = require('../models/Task');
+const asyncWrapper = require('../middleware/async');
+const {createCError} = require('../errors/custom');
 
-async function getAllTasks(req, res) {
+const getAllTasks = asyncWrapper(async (req, res) => {
 
-	/*
-	 	#swagger.tags = ['Getters']
-	 */
+	const tasks = await Task.find({});
+	return res.status(200).json({tasks});
 
-	try{
+});
 
-		const tasks = await Task.find({});
-		return res.status(200).json({tasks});
-
-	} catch(err){
-
-		return res.status(500)
-			.json({msg: err});
-		
-	}
-
-}
-
-async function createTask(req, res){
+const createTask = asyncWrapper( async (req, res) => {
 
 	/*
 	 	#swagger.tags = ['Posters']
 	 */
 
-	try{
-
-		const task = await Task.create(req.body);
-		return res.status(201).json({task});
+	const task = await Task.create(req.body);
+	return res.status(201).json({task});
 		
-	} catch (err){
+});
 
-		return res.status(500)
-			.json({msg: err});
-
-	}
-
-}
-
-async function getTask(req, res){
+const getTask = asyncWrapper(async (req, res) =>{
 
 	/*
 	 	#swagger.tags = ['Getters']
 	 */
 
-	try{
+	const {id: taskId} = req.params;
+	const task = await Task.findOne({_id: taskId});
 
-		const {id: taskId} = req.params;
-		const task = await Task.findOne({_id: taskId});
-
-		if(!task){
-
-			return res.status(404)
-				.json({msg: 'Nenhuma tarefa com essa id'});
-
-		}
-
-		return res.status(200)
-			.json({task});
-
-	} catch (err) {
+	if(!task){
 		
-		return res.status(500).json({msg: err});
+		return  next(customCError('Not Found', 404));
 
 	}
 
-}
+	return res.status(200)
+		.json({task});
 
-async function updateTask(req, res){
+});
+
+const updateTask = asyncWrapper(async (req, res) =>{
 
 	/*
 	 	#swagger.tags = ['Posters']
 	 */
 
-	try{
+	const {id: taskId} = req.params;
+	const task = await Task.findOneAndUpdate({_id: taskId}, req.body,
+		{
+			new:true,
+			runValidators: true
+		});
 
-		const {id: taskId} = req.params;
-		const task = await Task.findOneAndUpdate({_id: taskId}, req.body,
-			{
-				new:true,
-				runValidators: true
-			});
+	if(!task){
 
-		if(!task){
-
-			return res.status(404)
-				.json({msg: 'Nenhuma tarefa com essa id'});
-
-		}
-
-		return res.status(200).json({id:taskId, data:req.body});
-
-	} catch (err){
-
-		return res.status(500).json({msg: err});
+		return  next(customCError('Not Found', 404));
 
 	}
 
-}
+	return res.status(200).json({id:taskId, data:req.body});
 
-async function deleteTask(req, res){
+});
+
+const deleteTask = asyncWrapper(async (req, res) => {
 
 	/*
 	 	#swagger.tags = ['Putters']
 	 */
 
-	try{
+	const {id: taskId} = req.params;
+	const task = await Task.findOneAndDelete({_id: taskId});
 
-		const {id: taskId} = req.params;
-		const task = await Task.findOneAndDelete({_id: taskId});
+	if(!task){
 
-		if(!task){
-
-			return res.status(404)
-				.json({msg: 'Nenhuma tarefa com essa id'});
-
-		}
-
-		return res.status(200)
-			.json({task});
-
-	} catch(err){
-
-		return res.status(500)
-			.json({msg: err});
+		return  next(customCError('Not Found', 404));
 
 	}
 
-}
+	return res.status(200)
+		.json({task});
+
+});
 
 module.exports = { 
 
