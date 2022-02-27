@@ -5,6 +5,7 @@ const myConnect = require('./db/connect');
 
 // midllewares
 
+main.use(express.static('./public'));
 main.use(express.json()); // does not work well with cURL
 main.use(express.urlencoded({extended: true}));
 

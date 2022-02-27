@@ -69,13 +69,35 @@ async function getTask(req, res){
 
 }
 
-function updateTask(req, res){
+async function updateTask(req, res){
 
 	/*
 	 	#swagger.tags = ['Posters']
 	 */
 
-	res.send('update task');
+	try{
+
+		const {id: taskId} = req.params;
+		const task = await Task.findOneAndUpdate({_id: taskId}, req.body,
+			{
+				new:true,
+				runValidators: true
+			});
+
+		if(!task){
+
+			return res.status(404)
+				.json({msg: 'Nenhuma tarefa com essa id'});
+
+		}
+
+		return res.status(200).json({id:taskId, data:req.body});
+
+	} catch (err){
+
+		return res.status(500).json({msg: err});
+
+	}
 
 }
 
